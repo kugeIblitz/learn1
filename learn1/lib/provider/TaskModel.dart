@@ -5,7 +5,7 @@ import 'package:dart_date/dart_date.dart';
 
 class TaskModel extends ChangeNotifier {
   final Map<String, List<Task>> _todotasks = {
-    globals.fate: [Task("Task 1", false, "Hello task 1", DateTime.now())],
+    globals.late: [Task("Task 1", false, "Hello task 1", DateTime.now())],
     globals.today: [Task("Task 1", false, "Hello task 1", DateTime.now())],
     globals.tomorrow: [Task("Task 1", false, "Hello task 1", DateTime.now())],
     globals.thisWeek: [Task("Task 1", false, "Hello task 1", DateTime.now())],
@@ -44,14 +44,15 @@ class TaskModel extends ChangeNotifier {
 
   String guessToDoDayFromDate(DateTime deadline) {
     if (deadline.isPast && !deadline.isToday) {
-      return globals.fate;
+      return globals.late;
     } else if (deadline.isToday) {
       return globals.today;
     } else if (deadline.isTomorrow) {
       return globals.tomorrow;
     } else if (deadline.getWeek == DateTime.now().getWeek) {
       return globals.thisWeek;
-    } else if (deadline.getWeek == DateTime.now().getWeek + 1) {
+    } else if (deadline.getWeek == DateTime.now().getWeek + 1 &&
+        deadline.isThisYear) {
       return globals.nextWeek;
     } else if (deadline.isThisMonth) {
       return globals.thisMonth;

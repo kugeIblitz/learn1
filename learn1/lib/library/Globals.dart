@@ -20,10 +20,20 @@ const List<MaterialColor> primaries = <MaterialColor>[
   Colors.red,
 ];
 
-const fate = "late";
+const late = "late";
 const today = "today";
 const tomorrow = "tomorrow";
 const thisWeek = "thisWeek";
 const nextWeek = "nextWeek";
 const thisMonth = "thisMonth";
 const later = "later";
+
+const Map<String, String> taskCategoryNames = {
+  late: "Late",
+  today: "Today",
+  tomorrow: "Tomorrow",
+  thisWeek: "This Week",
+  nextWeek: "Next Week",
+  thisMonth: "This Month",
+  later: "Later"
+};

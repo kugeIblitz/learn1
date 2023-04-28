@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../widget/ListAllTasksWidget.dart';
 import '../widget/ListTasksWidget.dart';
 
 class ListTasksView extends StatefulWidget {
@@ -30,7 +31,7 @@ class _ListTasksViewState extends State<ListTasksView> {
         ),
         body: const TabBarView(
           children: [
-            ListTasksWidget(),
+            ListAllTasksWidget(),
             ListTasksWidget(),
             ListTasksWidget(),
             ListTasksWidget(),
