@@ -37,3 +37,6 @@ const Map<String, String> taskCategoryNames = {
   thisMonth: "This Month",
   later: "Later"
 };
+
+//shared preferences keys
+const todoTasksKey = "todo_tasks";
