@@ -150,6 +150,7 @@ class _AddTasksViewState extends State<AddTasksView> {
                 Task newTask = Task(_titleController.text, false,
                     _descriptionController.text, _focusedDay);
                 task.add(newTask);
+                task.addTaskToCache(newTask);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Processing Data')),
                 );

@@ -1,4 +1,8 @@
+import 'package:uuid/uuid.dart';
+
 class Task {
+  String id = const Uuid().v1();
+
   String title;
   bool status;
   String description;
@@ -8,6 +12,7 @@ class Task {
 
   Map<String, dynamic> toJson() {
     return {
+      "id": id,
       "title": title,
       "status": status,
       "description": description,
@@ -16,7 +21,8 @@ class Task {
   }
 
   Task.fromJson(Map<String, dynamic> json)
-      : title = json['title'],
+      : id = json['id'],
+        title = json['title'],
         status = json['status'],
         description = json['description'],
         deadline = DateTime.tryParse(json['deadline'])!;

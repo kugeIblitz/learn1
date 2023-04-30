@@ -7,14 +7,22 @@ import 'package:dart_date/dart_date.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TaskModel extends ChangeNotifier {
+  TaskModel() {
+    initState();
+  }
+
+  void initState() {
+    loadTasksFromCache();
+  }
+
   final Map<String, List<Task>> _todotasks = {
-    globals.late: [Task("Task 1", false, "Hello task 1", DateTime.now())],
-    globals.today: [Task("Task 1", false, "Hello task 1", DateTime.now())],
-    globals.tomorrow: [Task("Task 1", false, "Hello task 1", DateTime.now())],
-    globals.thisWeek: [Task("Task 1", false, "Hello task 1", DateTime.now())],
-    globals.nextWeek: [Task("Task 1", false, "Hello task 1", DateTime.now())],
-    globals.thisMonth: [Task("Task 1", false, "Hello task 1", DateTime.now())],
-    globals.later: [Task("Task 1", false, "Hello task 1", DateTime.now())],
+    globals.late: [],
+    globals.today: [],
+    globals.tomorrow: [],
+    globals.thisWeek: [],
+    globals.nextWeek: [],
+    globals.thisMonth: [],
+    globals.later: [],
   };
 
   Map<String, List<Task>> get todotasks => _todotasks;
@@ -25,10 +33,10 @@ class TaskModel extends ChangeNotifier {
   }
 
   void add(Task task) {
+    print(task.id);
     String key = guessToDoDayFromDate(task.deadline);
     if (todotasks.containsKey(key)) {
       _todotasks[key]!.add(task);
-      syncCache();
       notifyListeners();
     }
   }
@@ -65,11 +73,31 @@ class TaskModel extends ChangeNotifier {
     }
   }
 
-  void syncCache() async {
+  void addTaskToCache(Task task) async {
 // Obtain shared preferences.
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(globals.todoTasksKey, jsonEncode(_todotasks));
-    final String? content = prefs.getString(globals.todoTasksKey);
-    print(content);
+    List<Task> tasksList = [];
+    if (prefs.containsKey(globals.todoTasksKey)) {
+      final String? data = prefs.getString(globals.todoTasksKey);
+      List<dynamic> oldTasks = json.decode(data!);
+      tasksList = List<Task>.from(oldTasks.map((e) => Task.fromJson(e)));
+      print(tasksList);
+    }
+    tasksList.add(task);
+    await prefs.setString(globals.todoTasksKey, jsonEncode(tasksList));
+  }
+
+  void loadTasksFromCache() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (prefs.containsKey(globals.todoTasksKey)) {
+      final String? data = prefs.getString(globals.todoTasksKey);
+      List<dynamic> oldTasks = json.decode(data!);
+      List<Task> tasksList =
+          List<Task>.from(oldTasks.map((e) => Task.fromJson(e)));
+      for (int i = 0; i < tasksList.length; i++) {
+        add(tasksList[i]);
+      }
+    }
   }
 }
