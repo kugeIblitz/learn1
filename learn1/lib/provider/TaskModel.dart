@@ -15,6 +15,7 @@ class TaskModel extends ChangeNotifier {
     loadTasksFromCache();
   }
 
+  final List<Task> _doneTasks = [];
   final Map<String, List<Task>> _todotasks = {
     globals.late: [],
     globals.today: [],
@@ -26,14 +27,22 @@ class TaskModel extends ChangeNotifier {
   };
 
   Map<String, List<Task>> get todotasks => _todotasks;
+  List<Task> get doneTasks => doneTasks;
 
-  void MakeAsDone(int index, bool status, String key) {
+  void markAsChecked(int index, bool status, String key) {
     _todotasks[key]![index].status = status;
     notifyListeners();
   }
 
+  void markAsDone(Task task, String key) {
+    _doneTasks.add(task);
+    syncDoneTasksToCache(task);
+    _todotasks[key]!.removeWhere((e) => (e.id == task.id));
+    print("done task${_doneTasks.map((e) => e.title)}");
+    notifyListeners();
+  }
+
   void add(Task task) {
-    print(task.id);
     String key = guessToDoDayFromDate(task.deadline);
     if (todotasks.containsKey(key)) {
       _todotasks[key]!.add(task);
@@ -99,5 +108,35 @@ class TaskModel extends ChangeNotifier {
         add(tasksList[i]);
       }
     }
+  }
+
+  void syncDoneTasksToCache(Task task) async {
+    //Retrieve all todoTasks
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<Task> tasksList = await getCacheValuesByKey(globals.todoTasksKey);
+
+    //remove from the list
+    tasksList.removeWhere((element) => element.id == task.id);
+    //update todo Tasks
+    await prefs.setString(globals.todoTasksKey, jsonEncode(tasksList));
+
+    //Retrieve all done tasks
+    List<Task> doneList = await getCacheValuesByKey(globals.doneTasksKey);
+    //add done task
+    doneList.add(task);
+    //update done tasks
+    await prefs.setString(globals.doneTasksKey, jsonEncode(tasksList));
+  }
+
+  Future<List<Task>> getCacheValuesByKey(String key) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<Task> tasksList = [];
+    if (prefs.containsKey(key)) {
+      final String? data = prefs.getString(key);
+      List<dynamic> oldTasks = json.decode(data!);
+      return tasksList = List<Task>.from(oldTasks.map((e) => Task.fromJson(e)));
+    }
+    return [];
   }
 }

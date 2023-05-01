@@ -40,3 +40,4 @@ const Map<String, String> taskCategoryNames = {
 
 //shared preferences keys
 const todoTasksKey = "todo_tasks";
+const doneTasksKey = "done_tasks";

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:learn1/model/Task.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/TaskModel.dart';
@@ -29,7 +30,12 @@ class ListTasksByTabKeyWidget extends StatelessWidget {
                   leading: Checkbox(
                     value: task.todotasks[tabKey]![index].status,
                     onChanged: (bool? value) {
-                      task.MakeAsDone(index, value!, tabKey);
+                      if (value!) {
+                        Task taskToDelete = task.todotasks[tabKey]![index];
+                        task.markAsChecked(index, value, tabKey);
+                        Future.delayed(const Duration(seconds: 2),
+                            () => task.markAsDone(taskToDelete, tabKey));
+                      }
                     },
                   ),
                 ),

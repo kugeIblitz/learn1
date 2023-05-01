@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:learn1/model/Task.dart';
 import 'package:provider/provider.dart';
 import 'package:learn1/library/Globals.dart' as globals;
 
@@ -51,7 +52,13 @@ class ListAllTasksWidget extends StatelessWidget {
                             leading: Checkbox(
                               value: task.todotasks[key]![index].status,
                               onChanged: (bool? value) {
-                                task.MakeAsDone(index, value!, key);
+                                if (value!) {
+                                  Task taskToDelete =
+                                      task.todotasks[key]![index];
+                                  task.markAsChecked(index, value, key);
+                                  Future.delayed(const Duration(seconds: 2),
+                                      () => task.markAsDone(taskToDelete, key));
+                                }
                               },
                             ),
                           ),
